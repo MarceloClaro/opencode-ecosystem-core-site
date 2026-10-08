@@ -4,19 +4,33 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Plano de negócio — OpenCode AuditKit</title>
-<style>*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:#1c2733;background:#f4f7fb}
-.top{background:#0b1220;color:#fff;padding:10px 20px;display:flex;gap:16px;flex-wrap:wrap;align-items:center}
-.top b{font-size:1rem}.top nav{display:flex;gap:14px;flex-wrap:wrap}.top a{color:#9ec5ff;text-decoration:none;font-size:.9rem}
-.hero{background:linear-gradient(135deg,#0b1220,#1565c0);color:#fff;padding:48px 20px;text-align:center}
-.hero h1{margin:0 0 8px;font-size:1.9rem}main{max-width:1000px;margin:0 auto;padding:28px 20px}
-section{background:#fff;border-radius:14px;padding:24px;margin-bottom:20px;box-shadow:0 2px 10px rgba(21,101,192,.08)}
-h2{color:#1565c0;margin-top:0}footer{text-align:center;color:#5b6b82;padding:24px;font-size:.85rem}
-a{color:#1565c0}code{background:#eef3fa;padding:2px 6px;border-radius:6px}
-table{width:100%;border-collapse:collapse;font-size:.9rem}th,td{text-align:left;padding:8px;border-bottom:1px solid #e3eaf3}th{background:#eaf2fd;color:#0b3d7a}
-canvas#mapa{width:100%;height:480px;border:1px solid #d7e3f2;border-radius:12px;background:#0b1220}
-audio{width:100%;margin:8px 0}.nums{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:20px}
-.num{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:10px 18px;min-width:120px;text-align:center}
-.num b{display:block;font-size:1.4rem}</style>
+<style>@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Rajdhani:wght@400;500;600&display=swap');
+:root{--neon:#00f0ff;--magenta:#ff2fd6;--fundo:#05060f;--painel:#0d1022;--texto:#d7e3ff;--suave:#8b98b8}
+*{box-sizing:border-box}body{margin:0;font-family:'Rajdhani',system-ui,sans-serif;color:var(--texto);background:var(--fundo) radial-gradient(ellipse at 20% -5%,rgba(0,240,255,.12),transparent 55%),radial-gradient(ellipse at 85% 10%,rgba(255,47,214,.1),transparent 50%)}
+.top{background:rgba(5,6,15,.9);border-bottom:1px solid rgba(0,240,255,.35);padding:10px 20px;display:flex;gap:16px;flex-wrap:wrap;align-items:center;box-shadow:0 0 18px rgba(0,240,255,.15)}
+.top b{font-family:'Orbitron',sans-serif;color:var(--neon);text-shadow:0 0 12px rgba(0,240,255,.8)}
+.top nav{display:flex;gap:14px;flex-wrap:wrap}.top a{color:var(--texto);text-decoration:none;font-weight:600;letter-spacing:.5px}
+.top a:hover{color:var(--magenta);text-shadow:0 0 10px rgba(255,47,214,.9)}
+.hero{padding:52px 20px;text-align:center;border-bottom:1px solid rgba(255,47,214,.3)}
+.hero h1{margin:0 0 8px;font-family:'Orbitron',sans-serif;font-size:2rem;color:#fff;text-shadow:0 0 18px var(--neon),0 0 42px rgba(0,240,255,.5)}
+.hero p{color:var(--suave)}
+main{max-width:1000px;margin:0 auto;padding:28px 20px}
+section{background:var(--painel);border:1px solid rgba(0,240,255,.25);border-radius:14px;padding:24px;margin-bottom:20px;box-shadow:0 0 24px rgba(0,240,255,.07)}
+h2{color:var(--neon);margin-top:0;font-family:'Orbitron',sans-serif;font-size:1.15rem;letter-spacing:1px;text-shadow:0 0 12px rgba(0,240,255,.6)}
+footer{text-align:center;color:var(--suave);padding:24px;font-size:.85rem}
+a{color:var(--neon)}code{background:#131735;color:var(--neon);padding:2px 6px;border-radius:6px;border:1px solid rgba(0,240,255,.25)}
+table{width:100%;border-collapse:collapse;font-size:.9rem}th,td{text-align:left;padding:8px;border-bottom:1px solid rgba(0,240,255,.18)}
+th{background:rgba(0,240,255,.1);color:var(--neon);font-family:'Orbitron',sans-serif;font-size:.75rem;letter-spacing:1px}
+audio{width:100%;margin:8px 0;filter:hue-rotate(140deg)}
+.nums{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+.num{background:rgba(0,240,255,.06);border:1px solid var(--neon);border-radius:12px;padding:10px 18px;min-width:120px;text-align:center;box-shadow:0 0 16px rgba(0,240,255,.25)}
+.num b{display:block;font-size:1.5rem;color:var(--neon);font-family:'Orbitron',sans-serif}
+.grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.cap{background:#11152c;border:1px solid rgba(255,47,214,.3);border-radius:12px;padding:16px}
+.cap h3{margin:0 0 6px;color:var(--magenta);font-size:1rem}.cap p{margin:0;color:var(--suave);font-size:.8rem}
+canvas#mapa{width:100%;height:480px;border:1px solid var(--neon);border-radius:12px;background:#05060f;box-shadow:0 0 24px rgba(0,240,255,.2)}
+input[type=search]{width:100%;padding:10px;border-radius:8px;border:1px solid var(--neon);background:#0b0f22;color:var(--texto)}
+.hero img{max-width:min(420px,86vw);border-radius:14px;box-shadow:0 0 34px rgba(255,47,214,.45);border:1px solid rgba(255,47,214,.5)}</style>
 </head>
 <body>
 <!-- FLAG_NEGOCIO_V1 -->
