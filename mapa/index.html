@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mapa dinâmico do ecossistema</title>
+<style>*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:#1c2733;background:#f4f7fb}
+.top{background:#0b1220;color:#fff;padding:10px 20px;display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+.top b{font-size:1rem}.top nav{display:flex;gap:14px;flex-wrap:wrap}.top a{color:#9ec5ff;text-decoration:none;font-size:.9rem}
+.hero{background:linear-gradient(135deg,#0b1220,#1565c0);color:#fff;padding:48px 20px;text-align:center}
+.hero h1{margin:0 0 8px;font-size:1.9rem}main{max-width:1000px;margin:0 auto;padding:28px 20px}
+section{background:#fff;border-radius:14px;padding:24px;margin-bottom:20px;box-shadow:0 2px 10px rgba(21,101,192,.08)}
+h2{color:#1565c0;margin-top:0}footer{text-align:center;color:#5b6b82;padding:24px;font-size:.85rem}
+a{color:#1565c0}code{background:#eef3fa;padding:2px 6px;border-radius:6px}
+table{width:100%;border-collapse:collapse;font-size:.9rem}th,td{text-align:left;padding:8px;border-bottom:1px solid #e3eaf3}th{background:#eaf2fd;color:#0b3d7a}
+canvas#mapa{width:100%;height:480px;border:1px solid #d7e3f2;border-radius:12px;background:#0b1220}
+audio{width:100%;margin:8px 0}.nums{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+.num{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:10px 18px;min-width:120px;text-align:center}
+.num b{display:block;font-size:1.4rem}</style>
+</head>
+<body>
+<!-- FLAG_MAPA_V1 -->
+<div class="top"><b>🧠 OpenCode Core</b><nav><a href="../">Início</a><a href="../mapa/">Mapa</a><a href="../podcast/">Podcast</a><a href="../negocio/">Negócio</a><a href="../estudo/">Estudo</a><a href="../livro/">Livro</a></nav></div>
+<div class="hero"><h1>Mapa dinâmico do ecossistema</h1><p>1402 nodos e 2217 vetores navegáveis + fluxograma operacional.</p></div>
+<main>
+<section><h2>Grafo interativo</h2>
+<p><input id="busca" type="search" placeholder="filtrar nodos…" style="width:100%;padding:10px;border-radius:8px;border:1px solid #d7e3f2"></p>
+<canvas id="mapa" width="920" height="480"></canvas>
+<p id="info" style="color:#5b6b82;font-size:.9rem">Carregando mapa…</p></section>
+<section><h2>Fluxograma operacional</h2>
+<pre class="mermaid">
+graph TD
+    %% Atores e Orquestrador
+    User([Usuário / CLI]) --&gt;|Comandos| Orchestrator[Orquestrador: marceloclaro]
+    WebUI([Webapp Streamlit&lt;br&gt;Dashboard + Jurídico]) --&gt;|Painel visual| Orchestrator
+    
+    %% Camada SDD/TDD
+    subgraph SDD [SDD &amp; TDD Engine]
+        Spec[SpecRegistry&lt;br&gt;Especificações]
+        Ver[SpecVerifier&lt;br&gt;Gate SDD]
+        TDD[TDDRunner&lt;br&gt;Red-Green-Refactor]
+        
+        TDD -.-&gt;|Valida| Ver
+        Ver -.-&gt;|Lê| Spec
+    end
+
+    %% Camada Transformer
+    subgraph TF [Transformer Layer]
+        Attn[AttentionRouter&lt;br&gt;Multi-Head]
+        Pipe[TransformerPipeline&lt;br&gt;Gerar-Verificar-Revisar]
+        HTM[(Hierarchical&lt;br&gt;Memory HTM)]
+        Emb[TaskEmbedder&lt;br&gt;d=64]
+        
+        Attn -.-&gt;|Usa| Emb
+        HTM -.-&gt;|Usa| Emb
+    end
+    
+    %% LLM Reduction Layer (R220-R222)
+    subgraph RED [LLM Reduction Layer]
+        RouterRR[RuleBasedRouter&lt;br&gt;25 regras + DecisionTree]
+        Class[LocalClassifier&lt;br&gt;TF-IDF + LogReg]
+        Whoosh[Whoosh3Engine&lt;br&gt;BM25F local &amp;lt; 30ms]
+        Game[GameTheoryLocal&lt;br&gt;Nash/Shapley/Pareto]
+        Jinja[Jinja2Engine&lt;br&gt;9 templates .j2]
+        DataHub[DataKnowledgeHub&lt;br&gt;16 fontes · 5 domínios]
+        Valid[CrossValidator&lt;br&gt;Calibration + Audit]
+        AuditTrail[AuditTrail&lt;br&gt;hash SHA-256]
+        
+        RouterRR --&gt; Class
+        DataHub --&gt; Valid
+        Valid --&gt; AuditTrail
+    end
+    
+    %% Observabilidade (R222)
+    subgraph OBS [Observabilidade]
+        Metrics[MetricsCollector&lt;br&gt;LLM calls saved]
+        HTTPMetrics[MetricsHTTPServer&lt;br&gt;/health · /metrics]
+        DocCheck[Doctor Check&lt;br&gt;llm_reduction_metrics]
+        
+        Metrics --&gt; HTTPMetrics
+        DocCheck -.-&gt;|consulta| Metrics
+    end
+    
+    %% Colibri MoE Engine (R228)
+    subgraph COLIBRI [Colibri OLMoE Engine]
+        Olmoe[OLMoE 1B-7B&lt;br&gt;64 experts · C nativo]
+        ColibriBridge[ColibriBridge&lt;br&gt;olmoe_complete]
+        ColibriMCP[Colibri MCP Server&lt;br&gt;colibri:olmoe]
+        ColibriProv[ColibriProvider&lt;br&gt;LLM Reduction fallback]
+        
+        ColibriBridge --&gt; Olmoe
+        ColibriMCP --&gt; ColibriBridge
+        ColibriProv --&gt; ColibriBridge
+    end
+    
+    %% Pipeline Academico Agentivo
+    subgraph Acad [Pipeline Academico Agentivo v3.0]
+        EvoSci[&quot;R101: EvoSci&lt;br&gt;MentorAgent+ResearcherAgent&lt;br&gt;ReviewerAgent+EvoEngine&quot;]
+        DeepRes[&quot;R102: Deep Research&lt;br&gt;EvidenceGraph+BFRS+DFRS&quot;]
+        PReview[&quot;R103: Peer Review&lt;br&gt;8-dim Rubric+AuditGraph&quot;]
+        Revision[&quot;R104d: Manuscript Revision&lt;br&gt;DiffEngine+Rebuttal&quot;]
+        Composer[&quot;R105: Paper Composer&lt;br&gt;ABNT/APA/IEEE&quot;]
+        
+        EvoSci --&gt; DeepRes
+        DeepRes --&gt; PReview
+        PReview --&gt; Revision
+        Revision --&gt; Composer
+    end
+    
+    %% Camada Core (Subsistemas)
+    subgraph Core [Core Subsystems]
+        Trust[Trust Engine&lt;br&gt;Behavioral Gate]
+        Eco[Token Economy&lt;br&gt;Staking/Slashing]
+        Scan[Scanners&lt;br&gt;Diagnóstico]
+        AcadLegacy[MASWOS&lt;br&gt;Qualis A1]
+        Reason[Reasoning&lt;br&gt;12 Engines + Quantum]
+        Legal[Legal Reasoning + AuxJuris&lt;br&gt;SPEC-921/922/923/924/925/926/927/928/931]
+        LegalBench[Legal Benchmarks&lt;br&gt;SPEC-928]
+        SynthUniv[Synthetic University&lt;br&gt;SPEC-935 · 11 Faculdades]
+        RAG[Scientific RAG&lt;br&gt;Grounding + Citations]
+        Bench[Superhuman Readiness&lt;br&gt;Benchmarks]
+        MetaEval[Metacognitive Eval&lt;br&gt;SPEC-920]
+        Discovery[Continuous Discovery&lt;br&gt;R95 · Loop Automático]
+        EvoMem[Evolutionary Memory&lt;br&gt;R97 · Memória Persistente]
+        Novelty[Novelty V2&lt;br&gt;R98 · Contribution Points]
+        RAGEvolved[RAG Evolved&lt;br&gt;R99 · Adaptive+CitationGraph]
+    end
+
+    %% Seguranca e Qualidade
+    subgraph SQC [Seguranca &amp; Qualidade]
+        MCPSec[MCP Security R100&lt;br&gt;Guard+Audit+Vetter+Limiter]
+        CICD[CI/CD Pipeline R106&lt;br&gt;GitHub Actions+Quality Gates]
+        Skills[Skills Exportaveis R104a&lt;br&gt;4 Skills]
+        PipPkg[Pip Packages R104b&lt;br&gt;3 Pacotes]
+    end
+
+    %% MCP + API Gateway
+    subgraph Protocols [Protocolos de Integração]
+        MCPServer[MCP Server · R94+R100&lt;br&gt;14 Ferramentas via stdio]
+        APIGateway[API Gateway · R96&lt;br&gt;10+ Endpoints FastAPI REST]
+        MCP_Sci[su_agentic_science]
+        MCP_Deep[su_deep_research]
+        MCP_Review2[su_peer_review_v2]
+        MCP_Revision[su_manuscript_revision]
+        MCP_Composer[su_paper_composer]
+        MCP_Novelty2[su_novelty_v2]
+        MCP_Sec[su_mcp_security]
+        MCP_Classic[su_generate/evaluate/enrich/visual/peer-review/submission/novelty/dashboard]
+    end
+
+    %% Camada MCI
+    subgraph MCI [Metacognitive Interconnect]
+        MB[MetaBus&lt;br&gt;Global Workspace]
+        BB[Blackboard&lt;br&gt;A2A Protocol]
+        Mem[(Metacognitive&lt;br&gt;Memory)]
+        Ref[Reflexion&lt;br&gt;Middleware]
+        
+        MB &lt;--&gt; Mem
+        BB &lt;--&gt; MB
+        Ref &lt;--&gt; MB
+    end
+    
+    %% Orquestrador integra as camadas
+    Orchestrator --&gt;|1. Cria Spec| Spec
+    Orchestrator --&gt;|2. Recuperação em 2 níveis| HTM
+    HTM --&gt;|Lê Episódica| Mem
+    Orchestrator --&gt;|3. Gate &amp; Roteia| Trust
+    Trust --&gt;|Libera| RED
+    RED --&gt;|conf &amp;gt;= 0.85| RouterRR
+    RouterRR --&gt;|skip Attn| BB
+    RED --&gt;|conf &amp;lt; 0.85| Attn
+    Attn --&gt;|Publica Volunteer| BB
+    Orchestrator --&gt;|4. Executa TDD| Pipe
+    Pipe --&gt;|Verifica| Ver
+    Orchestrator &lt;--&gt;|Usa| Core
+    
+    %% Conexões de observabilidade
+    Orchestrator --&gt;|get_reduction_stats| Metrics
+    RED -.-&gt;|alimenta| Metrics
+    
+    %% Pipeline academico
+    Orchestrator --&gt;|5. Pipeline Academico| EvoSci
+    EvoSci --&gt;|Alimenta| DeepRes
+    DeepRes --&gt;|Produz evidencia| PReview
+    PReview --&gt;|Gera revisao| Revision
+    Revision --&gt;|Manuscrito revisado| Composer
+    Composer --&gt;|Artigo final| Orchestrator
+    
+    %% Conexões de suporte
+    AcadLegacy --&gt;|Consulta evidências| RAG
+    Reason --&gt;|Grounding científico| RAG
+    RAG --&gt;|Métricas| Bench
+    RAGEvolved --&gt;|Citacoes em grafo| DeepRes
+    EvoMem --&gt;|Memoria de direcoes| EvoSci
+    Novelty --&gt;|Analise de novidade| EvoSci
+    MB --&gt;|Traços e reflexões| MetaEval
+    Trust --&gt;|Outcomes e confiança| MetaEval
+    
+    %% Jurídico
+    Orchestrator --&gt;|6. Raciocínio Jurídico| Legal
+    Legal --&gt;|Subsunção + Ponderação| Reason
+    Legal --&gt;|Interpretação Constitucional| MetaEval
+    Legal --&gt;|RAG jurídico + Datajud| RAG
+    Legal --&gt;|Agentes jurídicos A2A| BB
+    Legal --&gt;|Especialização por 7 ramos| LegalBench
+    LegalBench --&gt;|tiers conservadores| MetaEval
+    
+    %% SynthUniv
+    SynthUniv --&gt;|Gera teses| Discovery
+    Discovery --&gt;|Enriquece + Avalia| SynthUniv
+    
+    %% Seguranca e qualidade
+    MCPSec -.-&gt;|Protege| MCPServer
+    CICD -.-&gt;|Valida| Pipe
+    Skills -.-&gt;|Exporta| BB
+    PipPkg -.-&gt;|Distribui| External
+    
+    %% Integração MCP / API
+    SynthUniv -.-&gt;|Registra handlers| MCPServer
+    MCPServer --&gt; MCP_Classic
+    MCPServer --&gt; MCP_Sci
+    MCPServer --&gt; MCP_Deep
+    MCPServer --&gt; MCP_Review2
+    MCPServer --&gt; MCP_Revision
+    MCPServer --&gt; MCP_Composer
+    MCPServer --&gt; MCP_Novelty2
+    MCPServer --&gt;|stdio JSON-RPC| External
+    APIGateway --&gt;|Reusa handlers| MCPServer
+    APIGateway --&gt;|HTTP REST| External
+    
+    %% Agentes
+    subgraph Agents [Catálogo de Agentes 187+]
+        A1[Researcher]
+        A2[Coder]
+        A3[Reviewer]
+        A4[Academic Writer]
+        A5[EvoSci Agent]
+        A6[Deep Research]
+        A7[Peer Review]
+        A8[Paper Composer]
+        A9[Revision Agent]
+        A10[32 MASWOS Agents]
+    end
+    
+    %% Fluxo de Agentes
+    Agents -.-&gt;|Registra Agent Card| BB
+    BB -.-&gt;|Call for Proposals| Agents
+    Agents --&gt;|Voluntaria-se| BB
+    Agents --&gt;|Conclui Tarefa| Ref
+    
+    %% MCP
+    MCP_Node[MCP JSON-RPC] --&gt;|Expõe API| MCI
+    External[External Tools / LLMs] --&gt;|stdio ou HTTP| MCPServer
+    External --&gt;|HTTP REST| APIGateway
+
+</pre><script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true});</script></section>
+<script>
+fetch("mapa.json").then(r=>r.json()).then(g=>{
+ const cv=document.getElementById("mapa"),ctx=cv.getContext("2d"),info=document.getElementById("info");
+ const nodes=g.nodes, N=nodes.length, pos=nodes.map((_,i)=>{const a=i/N*6.283;return [460+380*Math.cos(a),240+200*Math.sin(a)];});
+ const cores={external:"#9ec5ff",core:"#ffd54f",data:"#80cbc4",agent:"#ce93d8",tool:"#ffab91"};
+ function draw(f){ctx.fillStyle="#0b1220";ctx.fillRect(0,0,920,480);
+  nodes.forEach((n,i)=>{if(f&&!(n.label||"").toLowerCase().includes(f)&&!(n.id||"").toLowerCase().includes(f))return;
+   ctx.fillStyle=cores[n.layer]||"#fff";ctx.beginPath();ctx.arc(pos[i][0],pos[i][1],3,0,6.283);ctx.fill();});
+  info.textContent=N+" nodos · filtro: "+(f||"—");}
+ draw("");
+ document.getElementById("busca").addEventListener("input",e=>draw(e.target.value.toLowerCase()));
+}).catch(()=>{document.getElementById("info").textContent="mapa.json indisponível.";});
+</script>
+</main>
+<footer>OpenCode Ecosystem Core · MIT · <a href="https://github.com/MarceloClaro/opencode-ecosystem-core">repositório</a></footer>
+</body>
+</html>
