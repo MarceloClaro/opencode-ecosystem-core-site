@@ -51,7 +51,12 @@ a{color:#00e5ff}
 <div class="top"><b>OPENCODE<i>/</i>CORE</b><nav><a href="../">Início</a><a href="../mapa/">Mapa</a><a href="../podcast/">Podcast</a><a href="../negocio/">Negócio</a><a href="../estudo/">Estudo</a><a href="../livro/">Livro</a></nav></div>
 <div class="hero"><div class="kicker">1402 nodos · 2217 vetores</div><h1>Todo o ecossistema, <em>navegável.</em></h1><p class="sub">Grafo vivo + fluxograma operacional.</p></div>
 <main>
-<section><h2>Grafo <i>vivo</i></h2><p class="lead">Busque qualquer componente.</p><p><input id="busca" type="search" placeholder="filtrar nodos…"></p><canvas id="mapa" width="920" height="480"></canvas><p id="info">Carregando…</p><div id="legenda" style="margin:14px 0"></div><div id="painel" style="margin:14px 0;padding:14px;border:1px solid rgba(255,255,255,.12);border-radius:12px"><h3>Seleção</h3><p>Clique em qualquer ponto do grafo para inspecionar o componente.</p></div></section>
+<section><h2>Grafo <i>vivo</i></h2><p class="lead">Busque qualquer componente.</p><p><input id="busca" type="search" placeholder="filtrar nodos…"></p><canvas id="mapa3d" width="920" height="520"></canvas><p id="info">Carregando…</p><div id="legenda"><h3>Legenda — função e técnica</h3>
+<p><b>external</b> — Atores externos<br>Operador, CLIs e executores. Técnica: leitura e análise com limites; autenticação local.</p>
+<p><b>core</b> — Núcleo orquestrado<br>Orquestrador, Specs, Gates, MetaBus, Blackboard. Técnica: spec antes de código, teste antes de entrega.</p>
+<p><b>data</b> — Dados e provas<br>Datasets, RAG, pins com hash. Técnica: custódia SHA-256.</p>
+<p><b>agent</b> — Agentes<br>248 Agent Cards. Técnica: roteamento por atenção (A2A).</p>
+<p><b>tool</b> — Ferramentas<br>MCPs, CLIs, hooks fail-closed. Técnica: MCP é ferramenta; hooks nunca executam terceiros.</p></div><div id="painel" style="margin:14px 0;padding:14px;border:1px solid rgba(255,255,255,.12);border-radius:12px"><h3>Seleção</h3><p>Clique em qualquer ponto do grafo para inspecionar o componente.</p></div></section>
 <section><h2>Fluxograma</h2><pre class="mermaid">
 graph TD
     %% Atores e Orquestrador
@@ -286,50 +291,62 @@ document.querySelectorAll("main section").forEach(s=>s.classList.add("reveal"));
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("visivel");io.unobserve(e.target);}}),{threshold:.1});
 document.querySelectorAll(".reveal").forEach(s=>io.observe(s));
 document.querySelectorAll(".num b").forEach(el=>{const alvo=+el.textContent;let i=0;const t=setInterval(()=>{i+=Math.max(1,Math.round(alvo/40));if(i>=alvo){i=alvo;clearInterval(t);}el.textContent=i;},30);});
-</script><script>
+</script><script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+const EXPL={external:["Atores externos","Operador, CLIs e executores. Técnica: leitura e análise com limites; autenticação local."],
+core:["Núcleo orquestrado","Orquestrador, Specs, Gates, MetaBus, Blackboard. Técnica: spec antes de código, teste antes de entrega."],
+data:["Dados e provas","Datasets, RAG, pins com hash. Técnica: custódia SHA-256."],
+agent:["Agentes","248 Agent Cards. Técnica: roteamento por atenção (A2A)."],
+tool:["Ferramentas","MCPs, CLIs, hooks fail-closed. Técnica: MCP é ferramenta; hooks nunca executam terceiros."]};
+const CORES={external:0x00e5ff,core:0xffd54f,data:0x00e5a0,agent:0xff3df0,tool:0xff9a3d};
 fetch("mapa.json").then(r=>r.json()).then(g=>{
- const cv=document.getElementById("mapa"),ctx=cv.getContext("2d"),info=document.getElementById("info"),painel=document.getElementById("painel");
  const ordem=["external","core","data","agent","tool"];
- const grupos={};ordem.forEach(k=>grupos[k]=[]);
- g.nodes.forEach(n=>{(grupos[n.layer]||grupos["tool"]).push(n);});
- const nos=[];grupos && ordem.forEach((k,prof)=>{grupos[k].forEach((n,j)=>{nos.push({d:n,x:60+800*(j+1)/(grupos[k].length+1),y:52+prof*96});});});
- const idx={};nos.forEach((o,i)=>idx[o.d.id]=i);
- const arestas=[];
- nos.forEach((o,i)=>{if(o.d.layer==="external")return;
-  const ant=ordem[ordem.indexOf(o.d.layer)-1];const pais=grupos[ant]||[];
-  if(pais.length){const pai=pais[i%pais.length];arestas.push([idx[pai.id],i]);}});
- const cores={external:"#00e5ff",core:"#ffd54f",data:"#00e5a0",agent:"#ff3df0",tool:"#ff9a3d"};
- const EXPL={external:["Atores externos","Operador, CLIs e executores. Técnica: leitura e análise com limites; autenticação local."],
-  core:["Núcleo orquestrado","Orquestrador, Specs, Gates, MetaBus, Blackboard. Técnica: spec antes de código, teste antes de entrega."],
-  data:["Dados e provas","Datasets, RAG, pins com hash. Técnica: custódia SHA-256."],
-  agent:["Agentes","248 Agent Cards. Técnica: roteamento por atenção (A2A)."],
-  tool:["Ferramentas","MCPs, CLIs, hooks fail-closed. Técnica: MCP é ferramenta; hooks nunca executam terceiros."]};
- let sel=-1,filtro="",tempo=0;
- function visivel(n){return !filtro||(n.d.label||"").toLowerCase().includes(filtro)||(n.d.id||"").toLowerCase().includes(filtro);}
- function neuronio(x,y,cor,grande){const R=grande?9:5;
-  const halo=ctx.createRadialGradient(x,y,1,x,y,R*3);halo.addColorStop(0,cor);halo.addColorStop(1,"rgba(0,0,0,0)");
-  ctx.fillStyle=halo;ctx.beginPath();ctx.arc(x,y,R*3,0,6.283);ctx.fill();
-  const soma=ctx.createRadialGradient(x-1,y-1,0,x,y,R);soma.addColorStop(0,"#fff");soma.addColorStop(.4,cor);soma.addColorStop(1,"#070b18");
-  ctx.fillStyle=soma;ctx.beginPath();ctx.arc(x,y,R,0,6.283);ctx.fill();}
- function draw(){tempo+=.03;ctx.fillStyle="#070b18";ctx.fillRect(0,0,920,480);
-  ctx.font="11px sans-serif";
-  ordem.forEach((k,prof)=>{ctx.fillStyle="#5f6b8a";ctx.fillText(k.toUpperCase()+" — decisão "+(prof+1),14,44+prof*96);});
-  arestas.forEach(([a,b],k)=>{const A=nos[a],B=nos[b];if(!visivel(A.d)||!visivel(B.d))return;
-   ctx.strokeStyle="rgba(120,160,255,.28)";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.stroke();
-   const t=(tempo+k*.13)%1,px=A.x+(B.x-A.x)*t,py=A.y+(B.y-A.y)*t;
-   ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(px,py,1.8,0,6.283);ctx.fill();});
-  let vis=0;
-  nos.forEach((o,i)=>{if(!visivel(o.d))return;vis++;neuronio(o.x,o.y,cores[o.d.layer]||"#fff",i===sel);});
-  info.textContent=g.nodes.length+" neurônios · "+arestas.length+" sinapses · visíveis: "+vis+(filtro?" · filtro: "+filtro:"");}
- document.getElementById("legenda").innerHTML="<h3>Legenda — função e técnica</h3>"+Object.keys(cores).map(k=>`<span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:${cores[k]};margin-right:6px"></span><b>${k}</b> — ${EXPL[k][0]}<br><span style="color:#8ea0c4">${EXPL[k][1]}</span>`).join("<br><br>");
- function mostrar(i){const n=nos[i].d,e=EXPL[n.layer]||["—","—"];
-  painel.innerHTML=`<h3>${n.label||n.id}</h3><p><code>${n.id}</code> · camada <b>${n.layer}</b> · profundidade ${ordem.indexOf(n.layer)+1}/5</p><p><b>Função:</b> ${e[0]} — ${e[1]}</p><p><b>Técnica completa:</b> neurônio auditável do mapa gerado por <code>marceloclaro/ecosystem_map.py</code>; árvore de decisão por camadas, pulsos sinápticos em loop, seleção por clique.</p>`;}
- cv.addEventListener("click",ev=>{const r=cv.getBoundingClientRect(),x=(ev.clientX-r.left)*920/r.width,y=(ev.clientY-r.top)*480/r.height;
-  let best=-1,bd=1e9;nos.forEach((o,i)=>{if(!visivel(o.d))return;const d=(o.x-x)**2+(o.y-y)**2;if(d<bd){bd=d;best=i;}});
-  if(best>=0&&bd<1600){const gsel=nos[best];sel=nos.indexOf(gsel);mostrar(nos.indexOf(gsel));}draw();});
- document.getElementById("busca").addEventListener("input",e=>{filtro=e.target.value.toLowerCase();draw();});
- (function loop(){draw();requestAnimationFrame(loop);})();
-}).catch(()=>{document.getElementById("info").textContent="mapa.json indisponível.";});
+ const el=document.getElementById("mapa3d");
+ const renderer=new THREE.WebGLRenderer({canvas:el,antialias:true});
+ renderer.setSize(920,520);
+ const scene=new THREE.Scene();scene.background=new THREE.Color(0x070b18);
+ const cam=new THREE.PerspectiveCamera(55,920/520,.1,2000);cam.position.set(0,60,190);
+ const ctl=new OrbitControls(cam,el);ctl.enableDamping=true;
+ scene.add(new THREE.AmbientLight(0x8899bb,1.2));
+ const sol=new THREE.PointLight(0xffffff,1.4);sol.position.set(60,120,80);scene.add(sol);
+ const pos=[],mapIdx={};
+ ordem.forEach((k,prof)=>{const arr=g.nodes.filter(n=>n.layer===k);const y=70-prof*35;
+  arr.forEach((n,j)=>{const a=j/Math.max(1,arr.length)*6.283,r=46+prof*9;
+   pos.push({d:n,x:r*Math.cos(a),y,z:r*Math.sin(a)});mapIdx[n.id]=pos.length-1;});});
+ const geo=new THREE.BufferGeometry(),vp=new Float32Array(pos.length*3),cl=new Float32Array(pos.length*3);
+ const C=new THREE.Color();
+ pos.forEach((o,i)=>{vp.set([o.x,o.y,o.z],i*3);C.set(CORES[ordem.find(k=>k===(o.d.layer))]||0xffffff);cl.set([C.r,C.g,C.b],i*3);o.i=i;});
+ geo.setAttribute("position",new THREE.BufferAttribute(vp,3));
+ geo.setAttribute("color",new THREE.BufferAttribute(cl,3));
+ const pts=new THREE.Points(geo,new THREE.PointsMaterial({size:2.4,vertexColors:true,transparent:true,opacity:.95}));
+ scene.add(pts);
+ const ev=[];
+ pos.forEach(o=>{if(o.d.layer==="external")return;
+  const ant=ordem[ordem.indexOf(o.d.layer)-1];
+  const cand=pos.filter(q=>q.d.layer===ant);if(!cand.length)return;
+  const pai=cand[o.i%cand.length];ev.push(pai,o);});
+ const lg=new THREE.BufferGeometry(),lv=new Float32Array(ev.length*3);
+ ev.forEach((o,i)=>lv.set([o.x,o.y,o.z],i*3));
+ lg.setAttribute("position",new THREE.BufferAttribute(lv,3));
+ scene.add(new THREE.LineSegments(lg,new THREE.LineBasicMaterial({color:0x3a4a6e,transparent:true,opacity:.5})));
+ const ray=new THREE.Raycaster(),mouse=new THREE.Vector2(),painel=document.getElementById("painel"),info=document.getElementById("info");
+ info.textContent=pos.length+" neurônios 3D · arraste para orbitar · scroll para zoom · clique para inspecionar";
+ el.addEventListener("click",e=>{const r=el.getBoundingClientRect();
+  mouse.set(((e.clientX-r.left)/r.width)*2-1,-((e.clientY-r.top)/r.height)*2+1);
+  ray.setFromCamera(mouse,cam);ray.params.Points={threshold:3};
+  const hit=ray.intersectObject(pts);
+  if(hit.length){const n=pos[hit[0].index].d,xe=EXPL[n.layer]||["—","—"];
+   painel.innerHTML=`<h3>${n.label||n.id}</h3><p><code>${n.id}</code> · camada <b>${n.layer}</b></p><p><b>Função:</b> ${xe[0]} — ${xe[1]}</p>`;}});
+ const busca=document.getElementById("busca");
+ busca.addEventListener("input",e=>{const f=e.target.value.toLowerCase();
+  const col=geo.attributes.color;let vis=0;
+  pos.forEach((o,i)=>{const ok=!f||(o.d.label||"").toLowerCase().includes(f)||(o.d.id||"").toLowerCase().includes(f);
+   if(ok)vis++;C.set(ok?(CORES[o.d.layer]||0xffffff):0x1a2140);col.setXYZ(i,C.r,C.g,C.b);});
+  col.needsUpdate=true;info.textContent=pos.length+" neurônios 3D · visíveis: "+vis;});
+ (function loop(){requestAnimationFrame(loop);scene.rotation.y+=.0009;ctl.update();renderer.render(scene,cam);})();
+}).catch(()=>{document.getElementById("info").textContent="mapa.json indisponível ou WebGL/CND bloqueado.";});
 </script>
 </body>
 </html>
