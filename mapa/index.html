@@ -289,31 +289,46 @@ document.querySelectorAll(".num b").forEach(el=>{const alvo=+el.textContent;let 
 </script><script>
 fetch("mapa.json").then(r=>r.json()).then(g=>{
  const cv=document.getElementById("mapa"),ctx=cv.getContext("2d"),info=document.getElementById("info"),painel=document.getElementById("painel");
- const nodes=g.nodes,pos=nodes.map((_,i)=>{const a=i/nodes.length*6.283;return [460+380*Math.cos(a),240+200*Math.sin(a)];});
+ const ordem=["external","core","data","agent","tool"];
+ const grupos={};ordem.forEach(k=>grupos[k]=[]);
+ g.nodes.forEach(n=>{(grupos[n.layer]||grupos["tool"]).push(n);});
+ const nos=[];grupos && ordem.forEach((k,prof)=>{grupos[k].forEach((n,j)=>{nos.push({d:n,x:60+800*(j+1)/(grupos[k].length+1),y:52+prof*96});});});
+ const idx={};nos.forEach((o,i)=>idx[o.d.id]=i);
+ const arestas=[];
+ nos.forEach((o,i)=>{if(o.d.layer==="external")return;
+  const ant=ordem[ordem.indexOf(o.d.layer)-1];const pais=grupos[ant]||[];
+  if(pais.length){const pai=pais[i%pais.length];arestas.push([idx[pai.id],i]);}});
  const cores={external:"#00e5ff",core:"#ffd54f",data:"#00e5a0",agent:"#ff3df0",tool:"#ff9a3d"};
- const EXPL={external:["Atores externos","Operador, CLIs e executores (Claude, Codex, Antigravity). Técnica: leitura e análise com limites de passos e tempo; autenticação conferida localmente."],
-  core:["Núcleo orquestrado","Orquestrador, SpecRegistry, Gates SDD/TDD, MetaBus e Blackboard. Técnica: especificação antes de código, teste antes de entrega, reflexão registrada."],
-  data:["Dados e provas","Datasets, RAG, pins com hash e manifestos. Técnica: cadeia de custódia por SHA-256; nada alegado sem artefato."],
-  agent:["Agentes do catálogo","248 agentes com Agent Cards e capacidades. Técnica: roteamento por atenção via Blackboard (A2A)."],
-  tool:["Ferramentas","MCPs, CLIs e hooks. Técnica: MCP fornece ferramentas e contexto; hooks fail-closed nunca executam terceiros."]};
- let sel=-1,filtro="";
- function draw(){ctx.fillStyle="#070b18";ctx.fillRect(0,0,920,480);
+ const EXPL={external:["Atores externos","Operador, CLIs e executores. Técnica: leitura e análise com limites; autenticação local."],
+  core:["Núcleo orquestrado","Orquestrador, Specs, Gates, MetaBus, Blackboard. Técnica: spec antes de código, teste antes de entrega."],
+  data:["Dados e provas","Datasets, RAG, pins com hash. Técnica: custódia SHA-256."],
+  agent:["Agentes","248 Agent Cards. Técnica: roteamento por atenção (A2A)."],
+  tool:["Ferramentas","MCPs, CLIs, hooks fail-closed. Técnica: MCP é ferramenta; hooks nunca executam terceiros."]};
+ let sel=-1,filtro="",tempo=0;
+ function visivel(n){return !filtro||(n.d.label||"").toLowerCase().includes(filtro)||(n.d.id||"").toLowerCase().includes(filtro);}
+ function neuronio(x,y,cor,grande){const R=grande?9:5;
+  const halo=ctx.createRadialGradient(x,y,1,x,y,R*3);halo.addColorStop(0,cor);halo.addColorStop(1,"rgba(0,0,0,0)");
+  ctx.fillStyle=halo;ctx.beginPath();ctx.arc(x,y,R*3,0,6.283);ctx.fill();
+  const soma=ctx.createRadialGradient(x-1,y-1,0,x,y,R);soma.addColorStop(0,"#fff");soma.addColorStop(.4,cor);soma.addColorStop(1,"#070b18");
+  ctx.fillStyle=soma;ctx.beginPath();ctx.arc(x,y,R,0,6.283);ctx.fill();}
+ function draw(){tempo+=.03;ctx.fillStyle="#070b18";ctx.fillRect(0,0,920,480);
+  ctx.font="11px sans-serif";
+  ordem.forEach((k,prof)=>{ctx.fillStyle="#5f6b8a";ctx.fillText(k.toUpperCase()+" — decisão "+(prof+1),14,44+prof*96);});
+  arestas.forEach(([a,b],k)=>{const A=nos[a],B=nos[b];if(!visivel(A.d)||!visivel(B.d))return;
+   ctx.strokeStyle="rgba(120,160,255,.28)";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.stroke();
+   const t=(tempo+k*.13)%1,px=A.x+(B.x-A.x)*t,py=A.y+(B.y-A.y)*t;
+   ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(px,py,1.8,0,6.283);ctx.fill();});
   let vis=0;
-  nodes.forEach((n,i)=>{const ok=!filtro||(n.label||"").toLowerCase().includes(filtro)||(n.id||"").toLowerCase().includes(filtro);
-   if(!ok)return;vis++;
-   const r=i===sel?7:3;ctx.fillStyle=i===sel?"#ffffff":(cores[n.layer]||"#fff");
-   ctx.beginPath();ctx.arc(pos[i][0],pos[i][1],r,0,6.283);ctx.fill();
-   if(i===sel){ctx.strokeStyle="#fff";ctx.beginPath();ctx.arc(pos[i][0],pos[i][1],11,0,6.283);ctx.stroke();}});
-  info.textContent=nodes.length+" nodos · visíveis: "+vis+(filtro?" · filtro: "+filtro:"");}
- function legenda(){return Object.keys(cores).map(k=>`<span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:${cores[k]};margin-right:6px"></span><b>${k}</b> — ${EXPL[k][0]}<br><span style="color:#8ea0c4">${EXPL[k][1]}</span>`).join("<br><br>");}
- document.getElementById("legenda").innerHTML="<h3>Legenda — função e técnica</h3>"+legenda();
- function mostrar(i){const n=nodes[i],e=EXPL[n.layer]||["—","—"];
-  painel.innerHTML=`<h3>${n.label||n.id}</h3><p><code>${n.id}</code> · camada <b>${n.layer}</b></p><p><b>Função:</b> ${e[0]} — ${e[1]}</p><p><b>Técnica completa:</b> nodo auditável do mapa gerado por <code>marceloclaro/ecosystem_map.py</code>; seleção por clique, busca textual e contagem de visíveis, tudo local no navegador.</p>`;}
+  nos.forEach((o,i)=>{if(!visivel(o.d))return;vis++;neuronio(o.x,o.y,cores[o.d.layer]||"#fff",i===sel);});
+  info.textContent=g.nodes.length+" neurônios · "+arestas.length+" sinapses · visíveis: "+vis+(filtro?" · filtro: "+filtro:"");}
+ document.getElementById("legenda").innerHTML="<h3>Legenda — função e técnica</h3>"+Object.keys(cores).map(k=>`<span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:${cores[k]};margin-right:6px"></span><b>${k}</b> — ${EXPL[k][0]}<br><span style="color:#8ea0c4">${EXPL[k][1]}</span>`).join("<br><br>");
+ function mostrar(i){const n=nos[i].d,e=EXPL[n.layer]||["—","—"];
+  painel.innerHTML=`<h3>${n.label||n.id}</h3><p><code>${n.id}</code> · camada <b>${n.layer}</b> · profundidade ${ordem.indexOf(n.layer)+1}/5</p><p><b>Função:</b> ${e[0]} — ${e[1]}</p><p><b>Técnica completa:</b> neurônio auditável do mapa gerado por <code>marceloclaro/ecosystem_map.py</code>; árvore de decisão por camadas, pulsos sinápticos em loop, seleção por clique.</p>`;}
  cv.addEventListener("click",ev=>{const r=cv.getBoundingClientRect(),x=(ev.clientX-r.left)*920/r.width,y=(ev.clientY-r.top)*480/r.height;
-  let best=-1,bd=1e9;pos.forEach((p,i)=>{const d=(p[0]-x)**2+(p[1]-y)**2;if(d<bd){bd=d;best=i;}});
-  if(best>=0&&bd<900){sel=best;mostrar(best);}draw();});
+  let best=-1,bd=1e9;nos.forEach((o,i)=>{if(!visivel(o.d))return;const d=(o.x-x)**2+(o.y-y)**2;if(d<bd){bd=d;best=i;}});
+  if(best>=0&&bd<1600){const gsel=nos[best];sel=nos.indexOf(gsel);mostrar(nos.indexOf(gsel));}draw();});
  document.getElementById("busca").addEventListener("input",e=>{filtro=e.target.value.toLowerCase();draw();});
- draw("");
+ (function loop(){draw();requestAnimationFrame(loop);})();
 }).catch(()=>{document.getElementById("info").textContent="mapa.json indisponível.";});
 </script>
 </body>
