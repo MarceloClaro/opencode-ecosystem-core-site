@@ -52,11 +52,11 @@ a{color:#00e5ff}
 <div class="hero"><div class="kicker">1402 nodos · 2217 vetores</div><h1>Todo o ecossistema, <em>navegável.</em></h1><p class="sub">Grafo vivo + fluxograma operacional.</p></div>
 <main>
 <section><h2>Grafo <i>vivo</i></h2><p class="lead">Busque qualquer componente.</p><p><input id="busca" type="search" placeholder="filtrar nodos…"></p><canvas id="mapa3d" width="920" height="520"></canvas><p id="info">Carregando…</p><div id="legenda"><h3>Legenda — função e técnica</h3>
-<p><b>external</b> — Atores externos<br>Operador, CLIs e executores. Técnica: leitura e análise com limites; autenticação local.</p>
-<p><b>core</b> — Núcleo orquestrado<br>Orquestrador, Specs, Gates, MetaBus, Blackboard. Técnica: spec antes de código, teste antes de entrega.</p>
-<p><b>data</b> — Dados e provas<br>Datasets, RAG, pins com hash. Técnica: custódia SHA-256.</p>
-<p><b>agent</b> — Agentes<br>248 Agent Cards. Técnica: roteamento por atenção (A2A).</p>
-<p><b>tool</b> — Ferramentas<br>MCPs, CLIs, hooks fail-closed. Técnica: MCP é ferramenta; hooks nunca executam terceiros.</p></div><div id="painel" style="margin:14px 0;padding:14px;border:1px solid rgba(255,255,255,.12);border-radius:12px"><h3>Seleção</h3><p>Clique em qualquer ponto do grafo para inspecionar o componente.</p></div></section>
+<p><b>external — Atores externos.</b> Quem chega de fora: você (operador), os CLIs e os executores de IA (Claude, Codex, Antigravity). Como funciona: nada executa sozinho aqui — todo pedido entra pela porta da frente, com limite de passos e de tempo, e a autenticação é conferida na sua máquina. Didática: pense na recepção de um laboratório. Quem ajuda: qualquer pessoa que usa o ecossistema sem precisar entender o interior dele.</p>
+<p><b>core — Núcleo orquestrado.</b> O cérebro: orquestrador marceloclaro, registro de especificações (SpecRegistry), portões de qualidade (gates SDD/TDD), memória compartilhada (MetaBus) e quadro de tarefas (Blackboard). Como funciona: nenhuma entrega nasce sem especificação escrita antes do código, nenhum código vale sem teste verde antes, e cada ciclo gera reflexão registrada. Didática: é o método científico virando rotina de software. Quem ajuda: desenvolvedores, pesquisadores e auditores que precisam de resultado reproduzível, não de promessa.</p>
+<p><b>data — Dados e provas.</b> O arquivo: datasets, buscas (RAG), pins de repositório com hash SHA-256 e manifestos. Como funciona: cada afirmação aponta para o artefato que a sustenta, e o hash prova que o artefato não mudou — é a cadeia de custódia. Didática: como etiquetas lacradas de evidência num inquérito. Quem ajuda: revisores, bancas e cidadãos que precisam conferir, não acreditar.</p>
+<p><b>agent — Agentes.</b> Os 248 especialistas com fichas de capacidade (Agent Cards). Como funciona: o roteador por atenção lê a tarefa, publica no Blackboard e casa com o agente de maior afinidade e confiança — colaboração entre agentes pelo protocolo A2A. Didática: uma orquestra onde o maestro escala o músico certo para cada trecho. Quem ajuda: quem tem um problema e não sabe qual especialista chamar.</p>
+<p><b>tool — Ferramentas.</b> As mãos: servidores MCP, CLIs e hooks. Como funciona: o MCP entrega ferramentas e contexto ao orquestrador; os hooks são travas fail-closed — qualquer negação vence e nada de terceiros executa sem consentimento. Didática: ferramentas numa bancada trancada, com a chave na sua mão. Quem ajuda: operadores que automatizam sem perder o controle.</p></div><div id="painel" style="margin:14px 0;padding:14px;border:1px solid rgba(255,255,255,.12);border-radius:12px"><h3>Seleção</h3><p>Clique em qualquer ponto do grafo para inspecionar o componente.</p></div></section>
 <section><h2>Fluxograma</h2><pre class="mermaid">
 graph TD
     %% Atores e Orquestrador
@@ -295,11 +295,13 @@ document.querySelectorAll(".num b").forEach(el=>{const alvo=+el.textContent;let 
 <script type="module">
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-const EXPL={external:["Atores externos","Operador, CLIs e executores. Técnica: leitura e análise com limites; autenticação local."],
-core:["Núcleo orquestrado","Orquestrador, Specs, Gates, MetaBus, Blackboard. Técnica: spec antes de código, teste antes de entrega."],
-data:["Dados e provas","Datasets, RAG, pins com hash. Técnica: custódia SHA-256."],
-agent:["Agentes","248 Agent Cards. Técnica: roteamento por atenção (A2A)."],
-tool:["Ferramentas","MCPs, CLIs, hooks fail-closed. Técnica: MCP é ferramenta; hooks nunca executam terceiros."]};
+const EXPL={external:["Atores externos","Todo pedido entra com limite de passos e tempo; autenticação conferida localmente.","Quem usa o sistema sem precisar entender o interior dele."],
+core:["Núcleo orquestrado","Spec antes do código, teste antes da entrega, reflexão registrada.","Quem precisa de resultado reproduzível: devs, pesquisadores, auditores."],
+data:["Dados e provas","Cada afirmação aponta para o artefato que a sustenta — cadeia de custódia SHA-256.","Quem precisa conferir, não acreditar."],
+agent:["Agentes","Roteamento por atenção via Blackboard (A2A).","Quem tem um problema e não sabe qual especialista chamar."],
+tool:["Ferramentas","MCP é ferramenta e contexto; hooks nunca executam terceiros sem consentimento.","Operadores que automatizam sem perder o controle."]};
+let DET={};
+fetch("detalhes.json").then(r=>r.json()).then(d=>{DET=d;}).catch(()=>{});
 const CORES={external:0x00e5ff,core:0xffd54f,data:0x00e5a0,agent:0xff3df0,tool:0xff9a3d};
 fetch("mapa.json").then(r=>r.json()).then(g=>{
  const ordem=["external","core","data","agent","tool"];
@@ -333,14 +335,16 @@ const MAPA={external:"external",orchestration:"core",mci:"core",transformer:"cor
  ev.forEach((o,i)=>lv.set([o.x,o.y,o.z],i*3));
  lg.setAttribute("position",new THREE.BufferAttribute(lv,3));
  scene.add(new THREE.LineSegments(lg,new THREE.LineBasicMaterial({color:0x3a4a6e,transparent:true,opacity:.5})));
- const ray=new THREE.Raycaster(),mouse=new THREE.Vector2(),painel=document.getElementById("painel"),info=document.getElementById("info");
+ const pulso=new THREE.Mesh(new THREE.SphereGeometry(3.2,20,20),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.9}));
+ pulso.visible=false;scene.add(pulso);let selPos=null; const ray=new THREE.Raycaster(),mouse=new THREE.Vector2(),painel=document.getElementById("painel"),info=document.getElementById("info");
  info.textContent=pos.length+" neurônios 3D · arraste para orbitar · scroll para zoom · clique para inspecionar";
  el.addEventListener("click",e=>{const r=el.getBoundingClientRect();
   mouse.set(((e.clientX-r.left)/r.width)*2-1,-((e.clientY-r.top)/r.height)*2+1);
   ray.setFromCamera(mouse,cam);ray.params.Points={threshold:3};
   const hit=ray.intersectObject(pts);
-  if(hit.length){const n=pos[hit[0].index].d,xe=EXPL[viz(n)]||["—","—"];
-   painel.innerHTML=`<h3>${n.label||n.id}</h3><p><code>${n.id}</code> · camada <b>${n.layer}</b></p><p><b>Função:</b> ${xe[0]} — ${xe[1]}</p>`;}});
+  if(hit.length){const h=pos[hit[0].index];selPos=h;pulso.visible=true;const n=h.d,xe=EXPL[viz(n)]||["—","—","—"];
+ const det=DET[n.id]||{},oxy=viz(n);
+ painel.innerHTML=`<h3>${n.label||n.id}</h3><p><code>${n.id}</code> · <b>${oxy}</b> (${n.layer})</p><p><b>O que é:</b> ${det.funcao||xe[0]}</p><p><b>Como funciona:</b> ${det.tecnica||xe[1]}</p><p><b>Quem ajuda:</b> ${xe[2]}</p>`;}});
  const busca=document.getElementById("busca");
  busca.addEventListener("input",e=>{const f=e.target.value.toLowerCase();
   const col=geo.attributes.color;let vis=0;
