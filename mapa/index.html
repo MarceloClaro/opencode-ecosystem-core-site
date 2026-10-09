@@ -57,7 +57,11 @@ a{color:#00e5ff}
 <p><b>data — Dados e provas.</b> O arquivo: datasets, buscas (RAG), pins de repositório com hash SHA-256 e manifestos. Como funciona: cada afirmação aponta para o artefato que a sustenta, e o hash prova que o artefato não mudou — é a cadeia de custódia. Didática: como etiquetas lacradas de evidência num inquérito. Quem ajuda: revisores, bancas e cidadãos que precisam conferir, não acreditar.</p>
 <p><b>agent — Agentes.</b> Os 248 especialistas com fichas de capacidade (Agent Cards). Como funciona: o roteador por atenção lê a tarefa, publica no Blackboard e casa com o agente de maior afinidade e confiança — colaboração entre agentes pelo protocolo A2A. Didática: uma orquestra onde o maestro escala o músico certo para cada trecho. Quem ajuda: quem tem um problema e não sabe qual especialista chamar.</p>
 <p><b>tool — Ferramentas.</b> As mãos: servidores MCP, CLIs e hooks. Como funciona: o MCP entrega ferramentas e contexto ao orquestrador; os hooks são travas fail-closed — qualquer negação vence e nada de terceiros executa sem consentimento. Didática: ferramentas numa bancada trancada, com a chave na sua mão. Quem ajuda: operadores que automatizam sem perder o controle.</p></div><div id="painel" style="margin:14px 0;padding:14px;border:1px solid rgba(255,255,255,.12);border-radius:12px"><h3>Seleção</h3><p>Clique em qualquer ponto do grafo para inspecionar o componente.</p></div></section>
-<section><h2>Fluxograma</h2><pre class="mermaid">
+<section style="background:#fff;color:#1c2733"><h2 style="color:#0f2a4a">Fluxograma — fundo branco navegável</h2>
+<p style="color:#5b6b82">Arraste para mover · scroll para zoom · botões para controlar.</p>
+<p><button id="zin" style="padding:8px 16px;margin-right:8px">＋ Zoom</button><button id="zout" style="padding:8px 16px;margin-right:8px">－ Zoom</button><button id="zreset" style="padding:8px 16px">⟲ Reset</button></p>
+<div id="fluxo" style="overflow:hidden;background:#fff;border:1px solid #d7e3f2;border-radius:12px;cursor:grab;touch-action:none">
+<pre class="mermaid">
 graph TD
     %% Atores e Orquestrador
     User([Usuário / CLI]) --&gt;|Comandos| Orchestrator[Orquestrador: marceloclaro]
@@ -282,8 +286,23 @@ graph TD
     External[External Tools / LLMs] --&gt;|stdio ou HTTP| MCPServer
     External --&gt;|HTTP REST| APIGateway
 
-</pre><script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-<script>mermaid.initialize({startOnLoad:true,theme:"dark"});</script></section>
+
+</pre></div>
+<script>mermaid.initialize({startOnLoad:true,theme:"default"});</script>
+<script>
+(function(){let s=1,x=0,y=0;const box=document.getElementById("fluxo");
+function apply(){const svg=box.querySelector("svg");if(svg){svg.style.transform=`translate(${x}px,${y}px) scale(${s})`;svg.style.transformOrigin="0 0";}}
+document.getElementById("zin").onclick=()=>{s=Math.min(3,s*1.25);apply();};
+document.getElementById("zout").onclick=()=>{s=Math.max(.4,s/1.25);apply();};
+document.getElementById("zreset").onclick=()=>{s=1;x=0;y=0;apply();};
+let drag=null;
+box.addEventListener("pointerdown",e=>{drag=[e.clientX-x,e.clientY-y];box.style.cursor="grabbing";});
+window.addEventListener("pointerup",()=>{drag=null;box.style.cursor="grab";});
+box.addEventListener("pointermove",e=>{if(drag){x=e.clientX-drag[0];y=e.clientY-drag[1];apply();}});
+box.addEventListener("wheel",e=>{e.preventDefault();s=Math.min(3,Math.max(.4,s*(e.deltaY<0?1.1:0.9)));apply();},{passive:false});
+new MutationObserver(apply).observe(box,{childList:true,subtree:true});
+})();
+</script></section>
 </main>
 <footer>OpenCode Ecosystem Core · MIT · <a href="https://github.com/MarceloClaro/opencode-ecosystem-core">repositório</a> · feito com carinho por Marcelo Claro</footer>
 <script>
