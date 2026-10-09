@@ -44,14 +44,15 @@ input[type=search]{width:100%;padding:12px;border-radius:10px;border:1px solid r
 footer{text-align:center;color:#5f6b8a;padding:40px;font-size:.85rem}
 a{color:#00e5ff}
 .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
-.reveal.visivel{opacity:1;transform:none}</style>
+.reveal.visivel{opacity:1;transform:none}.chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.chips button{background:rgba(255,255,255,.05);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:8px 16px;cursor:pointer;font-weight:700}.chips button:hover{border-color:#00e5ff;color:#00e5ff}</style>
 </head>
 <body>
 <!-- FLAG_MAPA_V1 -->
 <div class="top"><b>OPENCODE<i>/</i>CORE</b><nav><a href="../">Início</a><a href="../mapa/">Mapa</a><a href="../podcast/">Podcast</a><a href="../negocio/">Negócio</a><a href="../estudo/">Estudo</a><a href="../livro/">Livro</a></nav></div>
 <div class="hero"><div class="kicker">1402 nodos · 2217 vetores</div><h1>Todo o ecossistema, <em>navegável.</em></h1><p class="sub">Grafo vivo + fluxograma operacional.</p></div>
 <main>
-<section><h2>Grafo <i>vivo</i></h2><p class="lead">Busque qualquer componente.</p><p><input id="busca" type="search" placeholder="filtrar nodos…"></p><canvas id="mapa3d" width="920" height="520"></canvas><p id="info">Carregando…</p><div id="legenda"><h3>Legenda — função e técnica</h3>
+<section><h2>Grafo <i>vivo</i></h2><p class="lead">Busque qualquer componente.</p><p><input id="busca" type="search" placeholder="filtrar nodos…"></p><canvas id="mapa3d" width="920" height="520"></canvas><p id="info" style="font-size:1.05rem;font-weight:700">🧠 <span id="contagem">1402</span> neurônios 3D · arraste para orbitar · scroll para zoom · clique para inspecionar</p><div id="legenda"><h3>Legenda — função e técnica</h3>
+<div class="chips"><button data-k="">Todos</button><button data-k="external">external</button><button data-k="core">core</button><button data-k="data">data</button><button data-k="agent">agent</button><button data-k="tool">tool</button></div>
 <p><b>external — Atores externos.</b> Quem chega de fora: você (operador), os CLIs e os executores de IA (Claude, Codex, Antigravity). Como funciona: nada executa sozinho aqui — todo pedido entra pela porta da frente, com limite de passos e de tempo, e a autenticação é conferida na sua máquina. Didática: pense na recepção de um laboratório. Quem ajuda: qualquer pessoa que usa o ecossistema sem precisar entender o interior dele.</p>
 <p><b>core — Núcleo orquestrado.</b> O cérebro: orquestrador marceloclaro, registro de especificações (SpecRegistry), portões de qualidade (gates SDD/TDD), memória compartilhada (MetaBus) e quadro de tarefas (Blackboard). Como funciona: nenhuma entrega nasce sem especificação escrita antes do código, nenhum código vale sem teste verde antes, e cada ciclo gera reflexão registrada. Didática: é o método científico virando rotina de software. Quem ajuda: desenvolvedores, pesquisadores e auditores que precisam de resultado reproduzível, não de promessa.</p>
 <p><b>data — Dados e provas.</b> O arquivo: datasets, buscas (RAG), pins de repositório com hash SHA-256 e manifestos. Como funciona: cada afirmação aponta para o artefato que a sustenta, e o hash prova que o artefato não mudou — é a cadeia de custódia. Didática: como etiquetas lacradas de evidência num inquérito. Quem ajuda: revisores, bancas e cidadãos que precisam conferir, não acreditar.</p>
@@ -357,7 +358,7 @@ const MAPA={external:"external",orchestration:"core",mci:"core",transformer:"cor
  lg.setAttribute("position",new THREE.BufferAttribute(lv,3));
  scene.add(new THREE.LineSegments(lg,new THREE.LineBasicMaterial({color:0x3a4a6e,transparent:true,opacity:.5})));
  const pulso=new THREE.Mesh(new THREE.SphereGeometry(3.2,20,20),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.9}));
- pulso.visible=false;scene.add(pulso);let selPos=null; const ray=new THREE.Raycaster(),mouse=new THREE.Vector2(),painel=document.getElementById("painel"),info=document.getElementById("info");
+ pulso.visible=false;scene.add(pulso);let selPos=null,camada=""; const ray=new THREE.Raycaster(),mouse=new THREE.Vector2(),painel=document.getElementById("painel"),info=document.getElementById("info");
  info.textContent=pos.length+" neurônios 3D · arraste para orbitar · scroll para zoom · clique para inspecionar";
  el.addEventListener("click",e=>{const r=el.getBoundingClientRect();
   mouse.set(((e.clientX-r.left)/r.width)*2-1,-((e.clientY-r.top)/r.height)*2+1);
@@ -367,11 +368,12 @@ const MAPA={external:"external",orchestration:"core",mci:"core",transformer:"cor
  const det=DET[n.id]||{},oxy=viz(n);
  painel.innerHTML=`<h3>${n.label||n.id}</h3><p><code>${n.id}</code> · <b>${oxy}</b> (${n.layer})</p><p><b>O que é:</b> ${det.funcao||xe[0]}</p><p><b>Como funciona:</b> ${det.tecnica||xe[1]}</p><p><b>Quem ajuda:</b> ${xe[2]}</p>`;}});
  const busca=document.getElementById("busca");
- busca.addEventListener("input",e=>{const f=e.target.value.toLowerCase();
-  const col=geo.attributes.color;let vis=0;
-  pos.forEach((o,i)=>{const ok=!f||(o.d.label||"").toLowerCase().includes(f)||(o.d.id||"").toLowerCase().includes(f)||(o.d.layer||"").toLowerCase().includes(f);
+function pintar(f){const col=geo.attributes.color;let vis=0;
+  pos.forEach((o,i)=>{const ok=(!f||(o.d.label||"").toLowerCase().includes(f)||(o.d.id||"").toLowerCase().includes(f)||(o.d.layer||"").toLowerCase().includes(f))&&(!camada||viz(o.d)===camada);
    if(ok)vis++;C.set(ok?(CORES[viz(o.d)]||0xffffff):0x1a2140);col.setXYZ(i,C.r,C.g,C.b);});
-  col.needsUpdate=true;info.textContent=pos.length+" neurônios 3D · visíveis: "+vis;});
+  col.needsUpdate=true;info.textContent=pos.length+" neurônios 3D · visíveis: "+vis+(camada?" · camada "+camada:"");}
+ busca.addEventListener("input",e=>{camada="";pintar(e.target.value.toLowerCase());});
+ document.querySelectorAll(".chips button").forEach(b=>b.addEventListener("click",()=>{camada=b.dataset.k;document.getElementById("busca").value="";pintar("");}));
  (function loop(){requestAnimationFrame(loop);scene.rotation.y+=.0009;ctl.update();renderer.render(scene,cam);})();
 }).catch(()=>{document.getElementById("info").textContent="mapa.json indisponível ou WebGL/CND bloqueado.";});
 </script>
