@@ -3,13 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Negócio — Do Rigor ao Produto</title>
+<title>OdontoCA — Laboratório de Predição de Cárie</title>
 <style>*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
 body{font-family:'Inter',system-ui,sans-serif;background:#04050c;color:#eef1ff;overflow-x:hidden}
 .top{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;gap:22px;align-items:center;padding:14px 30px;background:rgba(4,5,12,.7);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.08)}
 .top b{font-weight:900;letter-spacing:2px;font-size:.85rem}.top b i{font-style:normal;color:#ff3df0}
 .top nav{display:flex;gap:18px;margin-left:auto}.top a{color:#9aa3bd;text-decoration:none;font-size:.82rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase}
 .top a:hover{color:#fff}
+.hero{min-height:100vh;background:url('livro/capa.jpg') center/cover fixed;position:relative;animation:respirar 26s ease-in-out infinite}
+@keyframes respirar{0%,100%{background-size:100%}50%{background-size:112%}}
+.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,5,12,.82),rgba(4,5,12,.55) 45%,rgba(4,5,12,.92)),radial-gradient(800px 400px at 50% 30%,rgba(255,61,240,.18),transparent 60%)}
+.hero>*{position:relative;z-index:1}
 .hero{min-height:92vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:120px 24px 60px;position:relative;background:radial-gradient(1000px 500px at 50% -100px,rgba(255,61,240,.16),transparent 60%),radial-gradient(800px 500px at 50% 110%,rgba(0,229,255,.12),transparent 60%)}
 .hero .kicker{font-size:.8rem;letter-spacing:4px;text-transform:uppercase;color:#00e5ff;margin-bottom:18px}
 .hero h1{font-size:clamp(2.6rem,7vw,5rem);font-weight:900;letter-spacing:-2px;line-height:1.02;max-width:900px}
@@ -47,18 +51,19 @@ a{color:#00e5ff}
 .reveal.visivel{opacity:1;transform:none}</style>
 </head>
 <body>
-<!-- FLAG_NEGOCIO_V1 -->
+<!-- FLAG_ODONTO_V1 -->
 <div class="top"><b>OPENCODE<i>/</i>CORE</b><nav><a href="../">Início</a><a href="../mapa/">Mapa</a><a href="../podcast/">Podcast</a><a href="../negocio/">Negócio</a><a href="../estudo/">Estudo</a><a href="../livro/">Livro</a><a href="../odonto/">OdontoCA</a></nav></div>
-<div class="hero"><div class="kicker">auditkit · proposta de valor</div><h1>Rigor auditável vira <em>receita.</em></h1><p class="sub">Trilhas com hash, gates e relatórios verificáveis.</p></div>
+<div class="hero"><div class="kicker">pesquisa odontológica auditável</div><h1>Prever a cárie <em>dente a dente.</em></h1><p class="sub">Sem vazamento. Sem atalho. Sem uso clínico sem validação.</p></div>
 <main>
-<section><h2>A tese</h2><p class="lead">Auditoria e reprodutibilidade como serviço: custo marginal baixo, pipelines determinísticos, sem LLM obrigatório.</p><a class="btn" href="plano.pdf">Baixar o plano (PDF)</a></section>
+<section><h2>Laboratório <i>OdontoCA</i></h2><p class="lead">Previsão de cárie na primeira infância, dente a dente, com validação honesta.</p><a class="btn" href="https://rx.engenhariaorofacial.com.br/">Acessar a plataforma Rx</a></section>
+<section><h2>Objetivo</h2><p class="lead">Prever quais dentes de leite desenvolverão cárie a partir de coorte longitudinal pública — com dobras separadas por criança, sem vazamento entre treino e teste.</p></section>
+<section><h2>Achados</h2><p class="lead">ROC 0.737 · precisão média 0.178 · contexto espacial não superou a base clínica · <b>sem limiar de decisão e sem uso clínico</b>; exige validação externa. Checklists TRIPOD-AI e PROBAST-AI.</p></section>
 </main>
-<footer>OpenCode Ecosystem Core · MIT · <a href="https://github.com/MarceloClaro/opencode-ecosystem-core">repositório</a> · feito com carinho por Marcelo Claro</footer>
+<footer>OpenCode Ecosystem Core</footer>
 <script>
 document.querySelectorAll("main section").forEach(s=>s.classList.add("reveal"));
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("visivel");io.unobserve(e.target);}}),{threshold:.1});
 document.querySelectorAll(".reveal").forEach(s=>io.observe(s));
-document.querySelectorAll(".num b").forEach(el=>{const alvo=+el.textContent;let i=0;const t=setInterval(()=>{i+=Math.max(1,Math.round(alvo/40));if(i>=alvo){i=alvo;clearInterval(t);}el.textContent=i;},30);});
 </script>
 </body>
 </html>
