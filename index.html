@@ -10,6 +10,10 @@ body{font-family:'Inter',system-ui,sans-serif;background:#04050c;color:#eef1ff;o
 .top b{font-weight:900;letter-spacing:2px;font-size:.85rem}.top b i{font-style:normal;color:#ff3df0}
 .top nav{display:flex;gap:18px;margin-left:auto}.top a{color:#9aa3bd;text-decoration:none;font-size:.82rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase}
 .top a:hover{color:#fff}
+.hero{min-height:100vh;background:url('livro/capa.jpg') center/cover fixed;position:relative;animation:respirar 26s ease-in-out infinite}
+@keyframes respirar{0%,100%{background-size:100%}50%{background-size:112%}}
+.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,5,12,.82),rgba(4,5,12,.55) 45%,rgba(4,5,12,.92)),radial-gradient(800px 400px at 50% 30%,rgba(255,61,240,.18),transparent 60%)}
+.hero>*{position:relative;z-index:1}
 .hero{min-height:92vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:120px 24px 60px;position:relative;background:radial-gradient(1000px 500px at 50% -100px,rgba(255,61,240,.16),transparent 60%),radial-gradient(800px 500px at 50% 110%,rgba(0,229,255,.12),transparent 60%)}
 .hero .kicker{font-size:.8rem;letter-spacing:4px;text-transform:uppercase;color:#00e5ff;margin-bottom:18px}
 .hero h1{font-size:clamp(2.6rem,7vw,5rem);font-weight:900;letter-spacing:-2px;line-height:1.02;max-width:900px}
@@ -49,7 +53,7 @@ a{color:#00e5ff}
 <body>
 <!-- FLAG_POLIMATA_V1 -->
 <div class="top"><b>OPENCODE<i>/</i>CORE</b><nav><a href="#">Início</a><a href="./mapa/">Mapa</a><a href="./podcast/">Podcast</a><a href="./negocio/">Negócio</a><a href="./estudo/">Estudo</a><a href="./livro/">Livro</a></nav></div>
-<div class="hero"><div class="kicker">pesquisa · agentes · ciência aberta</div><h1>Dados viram <em>conhecimento.</em> Conhecimento vira <em>ferramenta.</em></h1><p class="sub">Um ecossistema de orquestração multiagente para educação e ciência aberta.</p></div>
+<div class="hero"><div class="kicker">direção de arte MIRA · movimento perpétuo</div><div class="kicker">pesquisa · agentes · ciência aberta</div><h1>Dados viram <em>conhecimento.</em> Conhecimento vira <em>ferramenta.</em></h1><p class="sub">Um ecossistema de orquestração multiagente para educação e ciência aberta.</p></div>
 <main>
 <div class="nums"><div class="num"><b>248</b><span>agentes</span></div><div class="num"><b>15</b><span>mcps</span></div><div class="num"><b>20</b><span>checks</span></div><div class="num"><b>16</b><span>labs</span></div></div>
 <section><h2>O organismo <i>vivo</i></h2><p class="lead">O orquestrador <b>marceloclaro</b> percebe, delega, executa, verifica e reflete — 248 agentes sob Blackboard A2A, memória MetaBus e 15 servidores MCP.</p><a class="btn" href="mapa/">Explorar o mapa</a><a class="btn ghost" href="estudo/">Ler o estudo</a></section>
