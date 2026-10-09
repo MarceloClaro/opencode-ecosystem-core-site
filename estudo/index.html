@@ -4,28 +4,41 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Estudo científico — para devs e matemáticos</title>
-<style>*{box-sizing:border-box}body{margin:0;font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:#1f2937;background:#f8fafc;line-height:1.6}
-.top{background:#0f2a4a;color:#fff;padding:12px 24px;display:flex;gap:18px;flex-wrap:wrap;align-items:center}
-.top b{font-size:1rem;font-weight:700}.top nav{display:flex;gap:16px;flex-wrap:wrap}.top a{color:#cfe0f5;text-decoration:none;font-size:.92rem;font-weight:500}
-.top a:hover{color:#fff;text-decoration:underline}
-.hero{background:linear-gradient(180deg,#0f2a4a,#1e4e8c);color:#fff;padding:56px 20px;text-align:center}
-.hero h1{margin:0 0 10px;font-size:2rem;font-weight:700;letter-spacing:-.5px}.hero p{color:#dbe7f7;max-width:640px;margin:0 auto}
-main{max-width:1000px;margin:0 auto;padding:32px 20px}
-section{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:28px;margin-bottom:20px;box-shadow:0 1px 3px rgba(15,42,74,.08)}
-h2{color:#0f2a4a;margin-top:0;font-size:1.25rem;border-bottom:2px solid #1e4e8c;padding-bottom:8px}
-footer{text-align:center;color:#64748b;padding:28px;font-size:.85rem;border-top:1px solid #e2e8f0}
-a{color:#1e4e8c}code{background:#eef2f7;color:#0f2a4a;padding:2px 6px;border-radius:4px;font-size:.88em}
-table{width:100%;border-collapse:collapse;font-size:.92rem}th,td{text-align:left;padding:10px;border-bottom:1px solid #e2e8f0}
-th{background:#0f2a4a;color:#fff;font-size:.8rem;text-transform:uppercase;letter-spacing:.5px}
-tr:nth-child(even) td{background:#f8fafc}
-audio{width:100%;margin:8px 0}.nums{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:24px}
-.num{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.3);border-radius:10px;padding:12px 20px;min-width:120px;text-align:center}
-.num b{display:block;font-size:1.6rem}.grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
-.cap{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px}
-.cap h3{margin:0 0 6px;color:#0f2a4a;font-size:1rem}.cap p{margin:0;color:#64748b;font-size:.82rem}
-canvas#mapa{width:100%;height:480px;border:1px solid #cbd5e1;border-radius:10px;background:#fff}
-input[type=search]{width:100%;padding:10px;border-radius:8px;border:1px solid #cbd5e1}
-.hero img{max-width:min(420px,86vw);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.35)}</style>
+<style>*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:#e6ebf5;background:#070b16;line-height:1.65;-webkit-font-smoothing:antialiased}
+.top{position:sticky;top:0;z-index:50;background:rgba(7,11,22,.78);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(120,160,255,.14);padding:14px 28px;display:flex;gap:20px;flex-wrap:wrap;align-items:center}
+.top b{font-size:1.02rem;font-weight:800;letter-spacing:-.2px;background:linear-gradient(90deg,#7dd3fc,#c4b5fd);-webkit-background-clip:text;background-clip:text;color:transparent}
+.top nav{display:flex;gap:20px;flex-wrap:wrap;margin-left:auto}.top a{color:#aeb9d0;text-decoration:none;font-size:.9rem;font-weight:500;transition:color .2s}
+.top a:hover{color:#fff}
+.hero{padding:96px 24px 80px;text-align:center;background:radial-gradient(900px 420px at 50% -80px,rgba(99,102,241,.28),transparent 65%),radial-gradient(700px 380px at 85% 20%,rgba(34,211,238,.12),transparent 60%)}
+.hero h1{margin:0 0 14px;font-size:clamp(2rem,5vw,3.2rem);font-weight:800;letter-spacing:-1.5px;line-height:1.1;background:linear-gradient(90deg,#fff,#a5c4ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:#9aa7c4;font-size:1.1rem;max-width:660px;margin:0 auto}
+main{max-width:1040px;margin:0 auto;padding:40px 24px}
+section{background:rgba(255,255,255,.025);border:1px solid rgba(120,160,255,.12);border-radius:18px;padding:32px;margin-bottom:24px}
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+.reveal.visivel{opacity:1;transform:none}
+h2{font-size:1.3rem;letter-spacing:-.3px;margin:0 0 14px;color:#fff}
+h2::after{content:"";display:block;width:44px;height:3px;border-radius:2px;background:linear-gradient(90deg,#22d3ee,#818cf8);margin-top:8px}
+p{color:#b9c3da}
+footer{text-align:center;color:#66718c;padding:32px;font-size:.85rem}
+a{color:#7dd3fc}
+code{background:rgba(125,211,252,.1);color:#7dd3fc;padding:2px 8px;border-radius:6px;font-size:.87em;border:1px solid rgba(125,211,252,.2)}
+table{width:100%;border-collapse:collapse;font-size:.92rem}th,td{text-align:left;padding:10px 12px;border-bottom:1px solid rgba(120,160,255,.1)}
+th{font-size:.75rem;text-transform:uppercase;letter-spacing:1px;color:#8ea0c4}
+tbody tr{transition:background .2s}tbody tr:hover{background:rgba(99,102,241,.08)}
+audio{width:100%;margin:10px 0}
+.nums{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:28px}
+.num{background:rgba(255,255,255,.03);border:1px solid rgba(120,160,255,.18);border-radius:16px;padding:16px 24px;min-width:128px;text-align:center;transition:transform .25s,border-color .25s}
+.num:hover{transform:translateY(-4px);border-color:rgba(125,211,252,.5)}
+.num b{display:block;font-size:1.7rem;background:linear-gradient(90deg,#7dd3fc,#c4b5fd);-webkit-background-clip:text;background-clip:text;color:transparent}
+.num span{font-size:.8rem;color:#8ea0c4}
+.grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.cap{background:rgba(255,255,255,.03);border:1px solid rgba(120,160,255,.14);border-radius:14px;padding:18px;transition:transform .25s,border-color .25s}
+.cap:hover{transform:translateY(-4px);border-color:rgba(125,211,252,.5)}
+.cap h3{margin:0 0 6px;font-size:1rem;color:#fff}.cap p{margin:0;color:#8ea0c4;font-size:.82rem}
+canvas#mapa{width:100%;height:480px;border:1px solid rgba(120,160,255,.2);border-radius:14px;background:#0a0f22}
+input[type=search]{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(120,160,255,.25);background:#0a0f22;color:#e6ebf5}
+.hero img{max-width:min(420px,86vw);border-radius:16px;box-shadow:0 24px 70px rgba(0,0,0,.55);border:1px solid rgba(120,160,255,.25)}</style>
 </head>
 <body>
 <!-- FLAG_ESTUDO_V1 -->
@@ -39,5 +52,9 @@ input[type=search]{width:100%;padding:10px;border-radius:8px;border:1px solid #c
 <section><h2>5. Artefatos</h2><p>Mapa com 1402 nodos e 2217 vetores (<a href="../mapa/">ver</a>), rede polímata de 16 laboratórios e dossiês com cadeia de hashes.</p></section>
 </main>
 <footer>OpenCode Ecosystem Core · MIT · <a href="https://github.com/MarceloClaro/opencode-ecosystem-core">repositório</a></footer>
-</body>
+<script>
+document.querySelectorAll("main section").forEach(s=>s.classList.add("reveal"));
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("visivel");io.unobserve(e.target);}}),{threshold:.12});
+document.querySelectorAll(".reveal").forEach(s=>io.observe(s));
+</script></body>
 </html>
